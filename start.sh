@@ -17,6 +17,8 @@ echo "Running migrations..."
 php artisan migrate --force || true
 
 echo "Clearing caches..."
+php artisan cache:clear
+php artisan view:clear
 php artisan config:cache
 php artisan route:cache
 
