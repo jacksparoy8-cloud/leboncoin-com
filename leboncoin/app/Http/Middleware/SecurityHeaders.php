@@ -17,9 +17,11 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-
         
+        // HSTS seulement en production avec HTTPS
+        if (app()->environment('production') && $request->isSecure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
 
         return $response;
     }
