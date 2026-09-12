@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     sqlite3 \
     libsqlite3-dev \
+    postgresql-client \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -17,7 +19,8 @@ RUN docker-php-ext-install -j$(nproc) \
     bcmath \
     pdo \
     pdo_sqlite \
-    && docker-php-ext-enable bcmath pdo pdo_sqlite
+    pdo_pgsql \
+    && docker-php-ext-enable bcmath pdo pdo_sqlite pdo_pgsql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
